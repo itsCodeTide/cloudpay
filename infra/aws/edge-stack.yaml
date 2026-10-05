@@ -1,0 +1,85 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudPay CloudFront CDN and AWS WAF edge protection. Deploy in us-east-1.
+
+Parameters:
+  OriginDomainName:
+    Type: String
+    Description: Primary ALB DNS name, without https://.
+  CloudFrontCertificateArn:
+    Type: String
+    Description: ACM certificate ARN in us-east-1 for the frontend/API domain.
+  AliasDomainName:
+    Type: String
+    Description: Public CloudFront alias such as pay.example.com.
+
+Resources:
+  CloudPayWebAcl:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: cloudpay-edge-waf
+      Scope: CLOUDFRONT
+      DefaultAction: { Allow: {} }
+      VisibilityConfig:
+        CloudWatchMetricsEnabled: true
+        MetricName: CloudPayEdgeWaf
+        SampledRequestsEnabled: true
+      Rules:
+        - Name: AWSManagedCommonRules
+          Priority: 10
+          OverrideAction: { None: {} }
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesCommonRuleSet
+          VisibilityConfig:
+            CloudWatchMetricsEnabled: true
+            MetricName: CloudPayCommonRules
+            SampledRequestsEnabled: true
+        - Name: IpRateLimit
+          Priority: 20
+          Action: { Block: {} }
+          Statement:
+            RateBasedStatement:
+              Limit: 2000
+              AggregateKeyType: IP
+          VisibilityConfig:
+            CloudWatchMetricsEnabled: true
+            MetricName: CloudPayIpRateLimit
+            SampledRequestsEnabled: true
+
+  CloudPayDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: CloudPay CDN and API edge
+        Aliases: [!Ref AliasDomainName]
+        WebACLId: !GetAtt CloudPayWebAcl.Arn
+        Origins:
+          - Id: cloudpay-alb
+            DomainName: !Ref OriginDomainName
+            CustomOriginConfig:
+              HTTPSPort: 443
+              OriginProtocolPolicy: https-only
+              OriginSSLProtocols: [TLSv1.2]
+        DefaultCacheBehavior:
+          TargetOriginId: cloudpay-alb
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE]
+          CachedMethods: [GET, HEAD, OPTIONS]
+          Compress: true
+          ForwardedValues:
+            QueryString: true
+            Headers: [Authorization, Origin, Content-Type]
+            Cookies: { Forward: all }
+        ViewerCertificate:
+          AcmCertificateArn: !Ref CloudFrontCertificateArn
+          SslSupportMethod: sni-only
+          MinimumProtocolVersion: TLSv1.2_2021
+        PriceClass: PriceClass_100
+
+Outputs:
+  DistributionDomainName:
+    Value: !GetAtt CloudPayDistribution.DomainName
+  WebAclArn:
+    Value: !GetAtt CloudPayWebAcl.Arn

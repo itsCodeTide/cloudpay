@@ -1,0 +1,13 @@
+version: "3.9"
+
+# Development override — PostgreSQL only; run frontend & backend locally
+services:
+  postgres:
+    ports:
+      - "5432:5432"
+
+  backend:
+    profiles: ["full"]
+
+  frontend:
+    profiles: ["full"]

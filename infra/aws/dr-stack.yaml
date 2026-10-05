@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudPay disaster-recovery S3 backup destination.
+
+Parameters:
+  BackupBucketName:
+    Type: String
+    Description: Globally unique name for the DR backup bucket.
+  PrimaryAccountId:
+    Type: String
+    Description: AWS account ID that owns the primary CloudPay stack.
+
+Resources:
+  BackupReplicaBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Ref BackupBucketName
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: ExpireNoncurrentVersions
+            Status: Enabled
+            NoncurrentVersionExpiration:
+              NoncurrentDays: 180
+
+  BackupReplicaBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref BackupReplicaBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: DenyInsecureTransport
+            Effect: Deny
+            Principal: '*'
+            Action: 's3:*'
+            Resource:
+              - !GetAtt BackupReplicaBucket.Arn
+              - !Sub '${BackupReplicaBucket.Arn}/*'
+            Condition:
+              Bool:
+                aws:SecureTransport: false
+          - Sid: AllowPrimaryReplication
+            Effect: Allow
+            Principal:
+              AWS: !Sub 'arn:${AWS::Partition}:iam::${PrimaryAccountId}:root'
+            Action:
+              - s3:ObjectOwnerOverrideToBucketOwner
+              - s3:ReplicateObject
+              - s3:ReplicateDelete
+              - s3:ReplicateTags
+            Resource: !Sub '${BackupReplicaBucket.Arn}/*'
+
+Outputs:
+  BackupReplicaBucketArn:
+    Description: Pass this ARN to primary-stack.yaml as BackupReplicaBucketArn.
+    Value: !GetAtt BackupReplicaBucket.Arn
+  BackupReplicaBucketName:
+    Value: !Ref BackupReplicaBucket

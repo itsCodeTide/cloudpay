@@ -1,0 +1,109 @@
+spring:
+  application:
+    name: cloudpay-api
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  datasource:
+    url: ${SUPABASE_DB_URL:jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:cloudpay}}
+    username: ${SUPABASE_DB_USER:${DB_USER:cloudpay}}
+    password: ${SUPABASE_DB_PASSWORD:${DB_PASSWORD:cloudpay_secret}}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 10
+      minimum-idle: 2
+  data:
+    redis:
+      url: ${REDIS_URL:redis://localhost:6379}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    baseline-version: 0
+    out-of-order: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${SUPABASE_ISSUER_URI:https://qqqrziqluolfidyelgvr.supabase.co/auth/v1}
+
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: always
+    include-binding-errors: always
+
+cloudpay:
+  jwt:
+    secret: ${JWT_SECRET:cloudpay-jwt-secret-key-for-local-dev-min-256-bits-long-replace-in-prod}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+    refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:3001}
+  redis:
+    enabled: ${CLOUDPAY_REDIS_ENABLED:false}
+  events:
+    enabled: ${CLOUDPAY_EVENTS_ENABLED:false}
+    payment-topic: ${CLOUDPAY_PAYMENT_TOPIC:cloudpay.payment.events}
+  messaging:
+    sqs:
+      queue-url: ${CLOUDPAY_SQS_QUEUE_URL:}
+      enabled: ${CLOUDPAY_SQS_ENABLED:false}
+  backup:
+    s3-bucket: ${CLOUDPAY_BACKUP_S3_BUCKET:}
+    region: ${CLOUDPAY_BACKUP_REGION:${AWS_REGION:}}
+  disaster-recovery:
+    region: ${CLOUDPAY_DR_REGION:}
+  supabase:
+    url: ${SUPABASE_URL:https://qqqrziqluolfidyelgvr.supabase.co}
+    publishable-key: ${SUPABASE_PUBLISHABLE_KEY:sb_publishable_oEzUovLWW2ExsiASnsDXSA_plr38vLC}
+    secret-key: ${SUPABASE_SECRET_KEY:}
+    jwks-url: ${SUPABASE_JWKS_URL:https://qqqrziqluolfidyelgvr.supabase.co/auth/v1/.well-known/jwks.json}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+
+management:
+  health:
+    redis:
+      enabled: false
+    kafka:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized
+  metrics:
+    export:
+      cloudwatch:
+        enabled: ${CLOUDWATCH_METRICS_ENABLED:false}
+        namespace: ${CLOUDWATCH_METRICS_NAMESPACE:CloudPay}
+        step: ${CLOUDWATCH_METRICS_STEP:1m}
+        batch-size: ${CLOUDWATCH_METRICS_BATCH_SIZE:20}
+
+logging:
+  level:
+    com.cloudpay: DEBUG
+    org.springframework.security: WARN
+    org.springframework.web: INFO
+    org.flywaydb: INFO

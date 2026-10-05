@@ -1,0 +1,492 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  color-scheme: light;
+  --background: oklch(0.975 0.012 220);
+  --foreground: oklch(0.19 0.035 240);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.19 0.035 240);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.19 0.035 240);
+  --primary: oklch(0.49 0.17 197);
+  --primary-foreground: oklch(0.99 0.01 200);
+  --secondary: oklch(0.94 0.025 210);
+  --secondary-foreground: oklch(0.27 0.06 220);
+  --muted: oklch(0.955 0.015 220);
+  --muted-foreground: oklch(0.49 0.045 225);
+  --accent: oklch(0.93 0.055 185);
+  --accent-foreground: oklch(0.25 0.07 205);
+  --destructive: oklch(0.58 0.19 27);
+  --border: oklch(0.89 0.025 220);
+  --input: oklch(0.89 0.025 220);
+  --ring: oklch(0.62 0.14 195);
+  --chart-1: oklch(0.49 0.17 197);
+  --chart-2: oklch(0.68 0.13 175);
+  --chart-3: oklch(0.76 0.12 85);
+  --chart-4: oklch(0.58 0.11 230);
+  --chart-5: oklch(0.42 0.08 245);
+  --radius: 0.75rem;
+  --sidebar: oklch(0.18 0.045 235);
+  --sidebar-foreground: oklch(0.96 0.015 210);
+  --sidebar-primary: oklch(0.72 0.14 178);
+  --sidebar-primary-foreground: oklch(0.16 0.04 230);
+  --sidebar-accent: oklch(0.26 0.055 230);
+  --sidebar-accent-foreground: oklch(0.98 0.01 210);
+  --sidebar-border: oklch(0.28 0.05 230);
+  --sidebar-ring: oklch(0.62 0.14 195);
+}
+
+.dark {
+  color-scheme: dark;
+  --background: oklch(0.16 0.035 235);
+  --foreground: oklch(0.97 0.012 210);
+  --card: oklch(0.205 0.04 235);
+  --card-foreground: oklch(0.97 0.012 210);
+  --popover: oklch(0.22 0.045 235);
+  --popover-foreground: oklch(0.97 0.012 210);
+  --primary: oklch(0.72 0.14 178);
+  --primary-foreground: oklch(0.15 0.04 230);
+  --secondary: oklch(0.27 0.055 230);
+  --secondary-foreground: oklch(0.97 0.012 210);
+  --muted: oklch(0.25 0.045 235);
+  --muted-foreground: oklch(0.72 0.035 215);
+  --accent: oklch(0.3 0.07 200);
+  --accent-foreground: oklch(0.95 0.02 195);
+  --destructive: oklch(0.68 0.17 27);
+  --border: oklch(0.7 0.04 220 / 18%);
+  --input: oklch(0.7 0.04 220 / 24%);
+  --ring: oklch(0.72 0.14 178);
+  --chart-1: oklch(0.72 0.14 178);
+  --chart-2: oklch(0.62 0.13 195);
+  --chart-3: oklch(0.76 0.12 85);
+  --chart-4: oklch(0.58 0.11 230);
+  --chart-5: oklch(0.47 0.08 245);
+  --sidebar: oklch(0.12 0.04 235);
+  --sidebar-foreground: oklch(0.97 0.012 210);
+  --sidebar-primary: oklch(0.72 0.14 178);
+  --sidebar-primary-foreground: oklch(0.15 0.04 230);
+  --sidebar-accent: oklch(0.22 0.05 230);
+  --sidebar-accent-foreground: oklch(0.97 0.012 210);
+  --sidebar-border: oklch(0.7 0.04 220 / 18%);
+  --sidebar-ring: oklch(0.72 0.14 178);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    color-scheme: light;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply scroll-smooth;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+  button,
+  [role="button"] {
+    @apply cursor-pointer;
+  }
+  button:focus-visible,
+  input:focus-visible,
+  [role="button"]:focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+}
+
+@layer components {
+  .payment-shell {
+    background-image: radial-gradient(circle at 85% 0%, color-mix(in oklab, var(--primary) 9%, transparent), transparent 28rem);
+  }
+  .payment-card {
+    @apply border border-border/70 bg-card shadow-sm transition-shadow duration-200;
+  }
+  .payment-card:hover {
+    @apply shadow-md;
+  }
+  .payment-action {
+    @apply inline-flex min-h-10 items-center justify-center gap-2 whitespace-nowrap text-center align-middle;
+  }
+
+  /* ============================
+     AUTH PAGE — Google Pay style
+     ============================ */
+  .auth-page {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, oklch(0.13 0.04 240) 0%, oklch(0.18 0.05 220) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .auth-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% -10%, oklch(0.5 0.18 197 / 25%), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 80%, oklch(0.4 0.14 270 / 15%), transparent);
+    pointer-events: none;
+  }
+  .auth-card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 440px;
+    background: oklch(0.97 0.01 220 / 0.06);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid oklch(1 0 0 / 0.12);
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    box-shadow: 0 25px 50px oklch(0 0 0 / 0.4), inset 0 1px 0 oklch(1 0 0 / 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    animation: auth-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes auth-slide-up {
+    from { opacity: 0; transform: translateY(24px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .auth-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+  }
+  .auth-logo-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.875rem;
+    background: linear-gradient(135deg, oklch(0.55 0.18 197), oklch(0.45 0.2 220));
+    display: grid;
+    place-items: center;
+    color: white;
+    box-shadow: 0 4px 12px oklch(0.5 0.18 197 / 0.4);
+  }
+  .auth-logo-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -0.02em;
+  }
+  .auth-header { display: flex; flex-direction: column; gap: 0.25rem; }
+  .auth-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+  }
+  .auth-subtitle {
+    font-size: 0.9rem;
+    color: oklch(0.75 0.04 220);
+    margin-top: 0.25rem;
+  }
+
+  /* Google button */
+  .google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 1.25rem;
+    background: white;
+    color: oklch(0.25 0.02 240);
+    border: none;
+    border-radius: 0.875rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px oklch(0 0 0 / 0.15);
+    min-height: 3rem;
+  }
+  .google-btn:hover:not(:disabled) {
+    background: oklch(0.96 0.005 220);
+    box-shadow: 0 4px 16px oklch(0 0 0 / 0.2);
+    transform: translateY(-1px);
+  }
+  .google-btn:active:not(:disabled) { transform: scale(0.99); }
+  .google-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* Divider */
+  .auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: -0.25rem 0;
+  }
+  .auth-divider-line {
+    flex: 1;
+    height: 1px;
+    background: oklch(1 0 0 / 0.12);
+  }
+  .auth-divider-text {
+    font-size: 0.75rem;
+    color: oklch(0.65 0.03 220);
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Error / Notice */
+  .auth-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    background: oklch(0.6 0.18 25 / 0.15);
+    border: 1px solid oklch(0.6 0.18 25 / 0.3);
+    color: oklch(0.85 0.12 25);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .auth-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    background: oklch(0.55 0.15 155 / 0.15);
+    border: 1px solid oklch(0.55 0.15 155 / 0.3);
+    color: oklch(0.8 0.1 155);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  /* Form */
+  .auth-form { display: flex; flex-direction: column; gap: 1rem; }
+  .form-field { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: oklch(0.75 0.04 220);
+    letter-spacing: 0.01em;
+  }
+  .form-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .form-forgot {
+    font-size: 0.8125rem;
+    color: oklch(0.65 0.12 197);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .form-forgot:hover { color: oklch(0.75 0.14 197); }
+  .form-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .form-icon {
+    position: absolute;
+    left: 0.875rem;
+    width: 1rem;
+    height: 1rem;
+    color: oklch(0.6 0.05 220);
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+  .form-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.625rem;
+    background: oklch(1 0 0 / 0.07);
+    border: 1px solid oklch(1 0 0 / 0.12);
+    border-radius: 0.75rem;
+    color: white;
+    font-size: 0.9375rem;
+    transition: all 0.2s ease;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .form-input::placeholder { color: oklch(0.5 0.03 220); }
+  .form-input:focus {
+    background: oklch(1 0 0 / 0.1);
+    border-color: oklch(0.62 0.14 197 / 0.7);
+    box-shadow: 0 0 0 3px oklch(0.62 0.14 197 / 0.15);
+  }
+  .form-input:-webkit-autofill,
+  .form-input:-webkit-autofill:hover,
+  .form-input:-webkit-autofill:focus {
+    -webkit-text-fill-color: white;
+    -webkit-box-shadow: 0 0 0px 1000px oklch(0.22 0.045 235) inset;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+  .form-input-password { padding-right: 2.75rem; }
+  .form-eye-btn {
+    position: absolute;
+    right: 0.875rem;
+    background: none;
+    border: none;
+    color: oklch(0.6 0.05 220);
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s;
+  }
+  .form-eye-btn:hover { color: oklch(0.8 0.05 220); }
+
+  /* Submit button */
+  .auth-submit-btn {
+    width: 100% !important;
+    height: 3rem !important;
+    background: linear-gradient(135deg, oklch(0.55 0.18 197), oklch(0.45 0.2 220)) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 0.875rem !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.01em !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 4px 14px oklch(0.5 0.18 197 / 0.4) !important;
+  }
+  .auth-submit-btn:hover:not(:disabled) {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 20px oklch(0.5 0.18 197 / 0.5) !important;
+  }
+  .auth-submit-btn:active:not(:disabled) { transform: scale(0.99) !important; }
+  .auth-submit-btn:disabled { opacity: 0.6 !important; cursor: not-allowed !important; }
+
+  .auth-footer {
+    text-align: center;
+    font-size: 0.875rem;
+    color: oklch(0.65 0.03 220);
+    margin-top: -0.25rem;
+  }
+  .auth-link {
+    color: oklch(0.72 0.14 178);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .auth-link:hover { color: oklch(0.8 0.14 178); text-decoration: underline; }
+
+  /* ============================
+     RAZORPAY PAYMENT MODAL
+     ============================ */
+  .razorpay-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: oklch(0 0 0 / 0.6);
+    backdrop-filter: blur(4px);
+    padding: 1rem;
+    animation: fade-in 0.2s ease both;
+  }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  .razorpay-modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+    padding: 2rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 20px 60px oklch(0 0 0 / 0.3);
+    animation: auth-slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  /* ============================
+     DASHBOARD IMPROVEMENTS
+     ============================ */
+  .stat-card-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--foreground), var(--muted-foreground));
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  .nav-item-active {
+    background: linear-gradient(135deg, oklch(0.55 0.18 197 / 0.15), oklch(0.45 0.2 220 / 0.1));
+    border: 1px solid oklch(0.55 0.18 197 / 0.3);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+  background-color: color-mix(in oklab, var(--muted-foreground) 35%, transparent);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in oklab, var(--muted-foreground) 55%, transparent);
+}
+
+@media (max-width: 1023px) {
+  .payment-shell {
+    background-image: none;
+  }
+}
