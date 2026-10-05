@@ -1,6 +1,6 @@
 # Full Render deployment
 
-The root `render.yaml` defines two Render web services:
+The root `render.yaml` is the single-click Render Blueprint and defines two Render web services:
 
 - `cloudpay-web`: Next.js frontend plus its `/api/*` routes.
 - `cloudpay-api`: Spring Boot Java API with Flyway migrations.
@@ -21,11 +21,10 @@ Create/configure:
 
 ## Create the Render Blueprint
 
-1. Push this repository to GitHub.
-2. Open Render → **New → Blueprint**.
-3. Select the repository and branch containing `render.yaml`.
-4. Review the two services and keep the `free` plans.
-5. When Render prompts for `sync: false` values, enter the values listed below.
+1. Push this repository to GitHub with `render.yaml` at the repository root.
+2. In Render, choose **New → Blueprint**, select the repository and branch, and click **Apply**.
+3. Keep the two `free` web services and enter the prompted `sync: false` values below.
+4. Wait for both health checks to pass. Render deploys future commits automatically.
 
 Render Blueprints support Docker services, health checks, generated secrets, and `sync: false` dashboard secrets. ([Render Blueprint reference](https://render.com/docs/blueprint-spec))
 
@@ -73,7 +72,8 @@ Set these on the Java service:
 
 ```text
 SPRING_PROFILES_ACTIVE=prod
-SERVER_PORT=8080
+PORT=10000
+SERVER_PORT=10000
 SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLIC_KEY
 SUPABASE_SECRET_KEY=YOUR_SERVER_ONLY_SUPABASE_SECRET
@@ -101,11 +101,11 @@ The Blueprint uses:
 ```text
 Frontend Dockerfile: Dockerfile.render.frontend
 Frontend health: /api/openapi.json
-Backend Dockerfile: backend/Dockerfile
+Backend Dockerfile: backend/Dockerfile (with `rootDir: backend`; Docker paths are relative to that root)
 Backend health: /actuator/health
 ```
 
-The Java container runs Flyway at startup. Wait for the backend logs to show a successful migration and `Started CloudPayApplication` before testing the frontend.
+The Java container listens on Render's `PORT` (10000 in the Blueprint) and runs Flyway at startup. Wait for the backend logs to show a successful migration and `Started CloudPayApplication` before testing the frontend.
 
 ## Configure Supabase redirects after deployment
 

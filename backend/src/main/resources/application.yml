@@ -38,7 +38,8 @@ spring:
           issuer-uri: ${SUPABASE_ISSUER_URI:https://qqqrziqluolfidyelgvr.supabase.co/auth/v1}
 
 server:
-  port: ${SERVER_PORT:8080}
+  # Render provides PORT for web services. SERVER_PORT remains the local/Docker Compose fallback.
+  port: ${PORT:${SERVER_PORT:8080}}
   error:
     include-message: always
     include-binding-errors: always

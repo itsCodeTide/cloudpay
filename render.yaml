@@ -7,14 +7,19 @@ services:
     dockerContext: .
     plan: free
     healthCheckPath: /api/openapi.json
+    autoDeployTrigger: commit
     envVars:
       - key: PORT
         value: "10000"
+      - key: HOSTNAME
+        value: 0.0.0.0
       - key: NEXT_PUBLIC_API_URL
         sync: false
       - key: NEXT_PUBLIC_AUTH_CALLBACK_URL
         sync: false
       - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
         sync: false
       - key: NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
         sync: false
@@ -62,15 +67,19 @@ services:
     name: cloudpay-api
     runtime: docker
     rootDir: backend
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    # These paths are relative to rootDir (backend), not the repository root.
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
     plan: free
     healthCheckPath: /actuator/health
+    autoDeployTrigger: commit
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
+      - key: PORT
+        value: "10000"
       - key: SERVER_PORT
-        value: "8080"
+        value: "10000"
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_PUBLISHABLE_KEY
@@ -91,15 +100,33 @@ services:
         sync: false
       - key: JWT_SECRET
         generateValue: true
+      - key: JWT_EXPIRATION_MS
+        value: "86400000"
+      - key: JWT_REFRESH_EXPIRATION_MS
+        value: "604800000"
       - key: CLOUDPAY_REDIS_ENABLED
         value: "false"
       - key: REDIS_URL
         sync: false
       - key: CLOUDPAY_EVENTS_ENABLED
         value: "false"
+      - key: CLOUDPAY_PAYMENT_TOPIC
+        value: cloudpay.payment.events
       - key: KAFKA_BOOTSTRAP_SERVERS
         sync: false
       - key: CLOUDPAY_SQS_ENABLED
         value: "false"
+      - key: CLOUDPAY_SQS_QUEUE_URL
+        sync: false
+      - key: CLOUDPAY_BACKUP_S3_BUCKET
+        sync: false
+      - key: CLOUDPAY_BACKUP_REGION
+        sync: false
+      - key: CLOUDPAY_DR_REGION
+        sync: false
       - key: CLOUDWATCH_METRICS_ENABLED
         value: "false"
+      - key: CLOUDWATCH_METRICS_NAMESPACE
+        value: CloudPay
+      - key: CLOUDWATCH_METRICS_STEP
+        value: 1m
