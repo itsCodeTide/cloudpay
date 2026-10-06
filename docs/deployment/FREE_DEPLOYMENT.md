@@ -7,7 +7,6 @@ This guide deploys the current CloudPay project with no planned monthly infrastr
 - **Vercel Hobby**: Next.js frontend and the `/api/*` routes used by the UI.
 - **Supabase Free**: PostgreSQL, Auth, and Storage.
 - **Optional Render Free**: the separate Spring Boot API in `backend/`.
-- **Aiven Free Kafka**: Kafka REST events through the `KAFKA_REST_*` variables.
 
 This is suitable for a demo, college project, and small test group. It is not a production banking or UPI settlement deployment. Render free services sleep after inactivity, Supabase free projects can be paused, and free plans have usage limits.
 

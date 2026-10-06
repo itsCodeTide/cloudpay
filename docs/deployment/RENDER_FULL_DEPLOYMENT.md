@@ -1,74 +1,51 @@
-# Full Render deployment
+# Simple Render deployment
 
-The root `render.yaml` is the single-click Render Blueprint and defines two Render web services:
+The root `render.yaml` is a small Render Blueprint with two services:
 
-- `cloudpay-web`: Next.js frontend plus its `/api/*` routes.
-- `cloudpay-api`: Spring Boot Java API with Flyway migrations.
+- `cloudpay-web`: the Next.js frontend and its `/api/*` routes.
+- `cloudpay-api`: the Spring Boot API.
 
-The Blueprint does not create Supabase, Firebase, Upstash Redis, or Aiven Kafka. Those are external managed services, so their credentials are marked `sync: false` and must be entered in the Render Dashboard instead of being committed to Git.
+Redis, Kafka, SQS, backups, CloudWatch, and their credentials are intentionally not part of this deployment.
 
-## Before creating the Blueprint
+## Important database note
 
-Rotate any credentials previously pasted into chat or committed locally. In particular, rotate the Aiven Kafka password, Redis token, Supabase database password, Supabase server key, and Razorpay secret.
+Render Blueprints cannot create or configure Firebase. In this project, Supabase provides the PostgreSQL database and authentication used by the application. Firebase is only optional client-side configuration for Google sign-in.
 
-Create/configure:
+Keep using the existing Supabase project and database migrations. Do not replace the Supabase database with Firebase unless the application is refactored to use Firebase instead of PostgreSQL/Supabase.
 
-1. A Supabase project and database schema. For a new project, run `supabase/schema.sql` in SQL Editor. For the existing project, keep using Flyway and do not run both migration strategies against the same database.
-2. An Upstash Redis database. Copy its REST URL and token.
-3. An Aiven Kafka service with Kafka REST/Karapace enabled. Create the `cloudpay-events` topic and a producer service user.
-4. A Firebase Web app if Firebase Google sign-in is used. Copy the public web configuration values.
-5. Razorpay test credentials. Keep the secret server-side.
-
-## Create the Render Blueprint
+## Deploy
 
 1. Push this repository to GitHub with `render.yaml` at the repository root.
-2. In Render, choose **New → Blueprint**, select the repository and branch, and click **Apply**.
-3. Keep the two `free` web services and enter the prompted `sync: false` values below.
-4. Wait for both health checks to pass. Render deploys future commits automatically.
+2. In Render, choose **New → Blueprint**.
+3. Select the repository and branch, then click **Apply**.
+4. Enter the prompted secret values below.
 
-Render Blueprints support Docker services, health checks, generated secrets, and `sync: false` dashboard secrets. ([Render Blueprint reference](https://render.com/docs/blueprint-spec))
+Render creates both services and deploys future commits automatically.
 
-## `cloudpay-web` environment variables
-
-Set these on the frontend service:
+## Required `cloudpay-web` variables
 
 ```text
-PORT=10000
-NEXT_PUBLIC_API_URL=https://cloudpay-api.onrender.com/api/v1
-NEXT_PUBLIC_AUTH_CALLBACK_URL=https://cloudpay-web.onrender.com/auth/callback
-
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLIC_KEY
 SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 SUPABASE_SECRET_KEY=YOUR_SERVER_ONLY_SUPABASE_SECRET
-
-UPSTASH_REDIS_REST_URL=https://YOUR_REDIS_ENDPOINT
-UPSTASH_REDIS_REST_TOKEN=YOUR_REDIS_TOKEN
-
-KAFKA_REST_URL=YOUR_AIVEN_KAFKA_REST_PROXY_URL
-KAFKA_USERNAME=YOUR_AIVEN_SERVICE_USER
-KAFKA_PASSWORD=YOUR_AIVEN_SERVICE_PASSWORD
-KAFKA_TOPIC=cloudpay-events
-
-NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_test_...
-RAZORPAY_KEY_ID=rzp_test_...
-RAZORPAY_KEY_SECRET=YOUR_SERVER_ONLY_RAZORPAY_SECRET
-
-NEXT_PUBLIC_FIREBASE_API_KEY=YOUR_FIREBASE_WEB_API_KEY
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=YOUR_FIREBASE_AUTH_DOMAIN
-NEXT_PUBLIC_FIREBASE_DATABASE_URL=YOUR_FIREBASE_DATABASE_URL
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=YOUR_FIREBASE_PROJECT_ID
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=YOUR_FIREBASE_STORAGE_BUCKET
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=YOUR_FIREBASE_MESSAGING_SENDER_ID
-NEXT_PUBLIC_FIREBASE_APP_ID=YOUR_FIREBASE_APP_ID
-NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=YOUR_FIREBASE_MEASUREMENT_ID
+JWT_SECRET=generate-a-long-random-secret
 ```
 
-Firebase web configuration values are public client configuration, but they should still be supplied through Render so the repository is not tied to one Firebase project.
+Firebase Google sign-in is optional. If enabled, also set:
 
-## `cloudpay-api` environment variables
+```text
+NEXT_PUBLIC_FIREBASE_API_KEY
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+NEXT_PUBLIC_FIREBASE_DATABASE_URL
+NEXT_PUBLIC_FIREBASE_PROJECT_ID
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+NEXT_PUBLIC_FIREBASE_APP_ID
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+```
 
-Set these on the Java service:
+## Required `cloudpay-api` variables
 
 ```text
 SPRING_PROFILES_ACTIVE=prod
@@ -79,58 +56,21 @@ SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLIC_KEY
 SUPABASE_SECRET_KEY=YOUR_SERVER_ONLY_SUPABASE_SECRET
 SUPABASE_JWKS_URL=https://YOUR_PROJECT.supabase.co/auth/v1/.well-known/jwks.json
 SUPABASE_ISSUER_URI=https://YOUR_PROJECT.supabase.co/auth/v1
-
 SUPABASE_DB_URL=jdbc:postgresql://POOLER_HOST:6543/postgres?sslmode=require&prepareThreshold=0
 SUPABASE_DB_USER=postgres.PROJECT_REF
 SUPABASE_DB_PASSWORD=YOUR_DATABASE_PASSWORD
-CORS_ALLOWED_ORIGINS=https://cloudpay-web.onrender.com
-JWT_SECRET=generate-a-long-random-secret
-
-CLOUDPAY_REDIS_ENABLED=false
-CLOUDPAY_EVENTS_ENABLED=false
-CLOUDPAY_SQS_ENABLED=false
-CLOUDWATCH_METRICS_ENABLED=false
+CORS_ALLOWED_ORIGINS=https://YOUR_WEB.onrender.com
 ```
 
-The Java service currently has a no-op Kafka publisher and does not consume Upstash REST Redis. Therefore, keep `CLOUDPAY_EVENTS_ENABLED=false` and `CLOUDPAY_REDIS_ENABLED=false` unless the Java integrations are implemented with native Aiven Kafka and TCP Redis/Valkey credentials. The active web event publisher is the Next.js Aiven REST publisher.
+The Blueprint generates `JWT_SECRET` automatically. Flyway applies the Java migrations when the API starts.
 
-## Build and health checks
-
-The Blueprint uses:
+## Health checks
 
 ```text
-Frontend Dockerfile: Dockerfile.render.frontend
-Frontend health: /api/openapi.json
-Backend Dockerfile: backend/Dockerfile (with `rootDir: backend`; Docker paths are relative to that root)
-Backend health: /actuator/health
+Frontend: https://YOUR_WEB.onrender.com/api/openapi.json
+API:      https://YOUR_API.onrender.com/actuator/health
 ```
 
-The Java container listens on Render's `PORT` (10000 in the Blueprint) and runs Flyway at startup. Wait for the backend logs to show a successful migration and `Started CloudPayApplication` before testing the frontend.
+After Render assigns the real service URL, set `CORS_ALLOWED_ORIGINS` to the frontend URL and add `https://YOUR_WEB.onrender.com/auth/callback` to Supabase Authentication → URL Configuration.
 
-## Configure Supabase redirects after deployment
-
-Render service URLs are known only after creation. In Supabase → Authentication → URL Configuration, add:
-
-```text
-https://cloudpay-web.onrender.com/auth/callback
-```
-
-Also update `NEXT_PUBLIC_AUTH_CALLBACK_URL` in Render with the actual frontend URL and redeploy.
-
-## Validate the deployment
-
-Open:
-
-```text
-https://cloudpay-web.onrender.com/api/openapi.json
-https://cloudpay-api.onrender.com/actuator/health
-https://cloudpay-api.onrender.com/v3/api-docs
-```
-
-Then test registration, PIN setup, balance verification, a test payment, profile editing, KYC submission, and notifications.
-
-For Kafka, trigger registration or a successful test payment and check the `cloudpay-events` topic in Aiven. For Redis, check the Upstash metrics and confirm the Render web logs do not contain `KAFKA_REST_URL not set` or `UPSTASH_REDIS_REST_URL not set`.
-
-## Free-tier behavior
-
-Render Free web services sleep after inactivity, so the first request can be slow. External Supabase, Redis, and Kafka services have their own free-tier limits and may pause or power off when idle. This deployment is for development/demo use, not real-money banking traffic.
+Render Free services can sleep when idle, so the first request may be slow. This setup is suitable for a demo, not real-money banking traffic.

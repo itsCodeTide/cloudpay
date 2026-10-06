@@ -12,11 +12,6 @@ spring:
       connection-timeout: 30000
       maximum-pool-size: 10
       minimum-idle: 2
-  data:
-    redis:
-      url: ${REDIS_URL:redis://localhost:6379}
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
   jpa:
     hibernate:
       ddl-auto: validate
@@ -35,7 +30,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${SUPABASE_ISSUER_URI:https://qqqrziqluolfidyelgvr.supabase.co/auth/v1}
+          issuer-uri: ${SUPABASE_ISSUER_URI:}
 
 server:
   # Render provides PORT for web services. SERVER_PORT remains the local/Docker Compose fallback.
@@ -51,25 +46,11 @@ cloudpay:
     refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:3001}
-  redis:
-    enabled: ${CLOUDPAY_REDIS_ENABLED:false}
-  events:
-    enabled: ${CLOUDPAY_EVENTS_ENABLED:false}
-    payment-topic: ${CLOUDPAY_PAYMENT_TOPIC:cloudpay.payment.events}
-  messaging:
-    sqs:
-      queue-url: ${CLOUDPAY_SQS_QUEUE_URL:}
-      enabled: ${CLOUDPAY_SQS_ENABLED:false}
-  backup:
-    s3-bucket: ${CLOUDPAY_BACKUP_S3_BUCKET:}
-    region: ${CLOUDPAY_BACKUP_REGION:${AWS_REGION:}}
-  disaster-recovery:
-    region: ${CLOUDPAY_DR_REGION:}
   supabase:
-    url: ${SUPABASE_URL:https://qqqrziqluolfidyelgvr.supabase.co}
-    publishable-key: ${SUPABASE_PUBLISHABLE_KEY:sb_publishable_oEzUovLWW2ExsiASnsDXSA_plr38vLC}
+    url: ${SUPABASE_URL:}
+    publishable-key: ${SUPABASE_PUBLISHABLE_KEY:}
     secret-key: ${SUPABASE_SECRET_KEY:}
-    jwks-url: ${SUPABASE_JWKS_URL:https://qqqrziqluolfidyelgvr.supabase.co/auth/v1/.well-known/jwks.json}
+    jwks-url: ${SUPABASE_JWKS_URL:}
 
 springdoc:
   api-docs:
@@ -80,11 +61,6 @@ springdoc:
     operations-sorter: alpha
 
 management:
-  health:
-    redis:
-      enabled: false
-    kafka:
-      enabled: false
   endpoints:
     web:
       exposure:
@@ -94,14 +70,6 @@ management:
       probes:
         enabled: true
       show-details: when_authorized
-  metrics:
-    export:
-      cloudwatch:
-        enabled: ${CLOUDWATCH_METRICS_ENABLED:false}
-        namespace: ${CLOUDWATCH_METRICS_NAMESPACE:CloudPay}
-        step: ${CLOUDWATCH_METRICS_STEP:1m}
-        batch-size: ${CLOUDWATCH_METRICS_BATCH_SIZE:20}
-
 logging:
   level:
     com.cloudpay: DEBUG

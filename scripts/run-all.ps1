@@ -80,7 +80,7 @@ if (-not (Test-Listening 8080)) {
     $corsOri = $envContent['CORS_ALLOWED_ORIGINS']
     $jwtSec  = $envContent['JWT_SECRET']
 
-    $jvmArgs = "-DSUPABASE_URL=$subUrl -DSUPABASE_PUBLISHABLE_KEY=$subKey -DSUPABASE_SECRET_KEY=$subSec -DSUPABASE_JWKS_URL=$subJwks -DSUPABASE_ISSUER_URI=$subIss -DSUPABASE_DB_URL=$dbUrl -DSUPABASE_DB_USER=$dbUser -DSUPABASE_DB_PASSWORD=$dbPass -DCORS_ALLOWED_ORIGINS=$corsOri -DJWT_SECRET=$jwtSec -DCLOUDPAY_REDIS_ENABLED=false -DCLOUDPAY_EVENTS_ENABLED=false -DSPRING_PROFILES_ACTIVE=dev"
+    $jvmArgs = "-DSUPABASE_URL=$subUrl -DSUPABASE_PUBLISHABLE_KEY=$subKey -DSUPABASE_SECRET_KEY=$subSec -DSUPABASE_JWKS_URL=$subJwks -DSUPABASE_ISSUER_URI=$subIss -DSUPABASE_DB_URL=$dbUrl -DSUPABASE_DB_USER=$dbUser -DSUPABASE_DB_PASSWORD=$dbPass -DCORS_ALLOWED_ORIGINS=$corsOri -DJWT_SECRET=$jwtSec -DSPRING_PROFILES_ACTIVE=dev"
 
     Start-Process -FilePath $mvnCmd `
         -ArgumentList @('spring-boot:run', "-Dspring-boot.run.jvmArguments=$jvmArgs") `

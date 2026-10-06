@@ -206,4 +206,3 @@ cloud-pay-fintech-web-app/
 ├── .env.local              # ✅ Updated with your credentials
 └── scripts/run-all.ps1     # ✅ Fixed single-command startup
 ```
-UPSTASH_REDIS_REST_URL="https://intense-turkey-185379.upstash.io"
