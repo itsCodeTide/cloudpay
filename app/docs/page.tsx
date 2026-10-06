@@ -1,11 +1,8 @@
+import { SwaggerExplorer } from './swagger-explorer'
+
 export default function DocsPage() {
   return (
-    <html lang="en">
-      <head>
-        <title>CloudPay API Docs</title>
-        <meta name="description" content="Interactive API documentation for CloudPay — test all endpoints directly in the browser." />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui.css" />
+    <div className="docs-page">
         <style>{`
           * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -254,10 +251,59 @@ export default function DocsPage() {
           }
 
           @keyframes spin { to { transform: rotate(360deg); } }
+          .swagger-load-error {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 16px 0;
+            padding: 16px;
+            border: 1px solid rgba(248, 113, 113, 0.45);
+            border-radius: 10px;
+            background: rgba(127, 29, 29, 0.2);
+            color: #fecaca;
+          }
+          .swagger-load-error a { color: #67e8f9; }
+
+          @media (max-width: 640px) {
+            .docs-header {
+              position: static;
+              flex-wrap: wrap;
+              gap: 10px;
+              padding: 12px 16px;
+            }
+            .docs-logo { flex: 1 1 auto; }
+            .docs-logo-text { font-size: 18px; }
+            .docs-links {
+              flex: 1 0 100%;
+              margin-left: 0;
+              justify-content: space-between;
+              gap: 4px;
+            }
+            .docs-link { padding: 7px 6px; font-size: 12px; }
+            .docs-badge { padding: 4px 8px; }
+            .swagger-wrapper { padding: 16px 8px; }
+            .backend-notice { padding: 12px; }
+            #swagger-ui .swagger-ui .wrapper { padding: 0 8px; }
+            #swagger-ui .swagger-ui .info .title { font-size: 22px !important; }
+            #swagger-ui .swagger-ui .opblock .opblock-summary {
+              align-items: flex-start;
+              flex-wrap: wrap;
+              padding: 10px;
+            }
+            #swagger-ui .swagger-ui .opblock .opblock-summary-path {
+              max-width: calc(100vw - 120px);
+              overflow-wrap: anywhere;
+              white-space: normal;
+            }
+            #swagger-ui .swagger-ui .parameters-container,
+            #swagger-ui .swagger-ui .responses-wrapper {
+              overflow-x: auto;
+            }
+            #swagger-ui .swagger-ui table { display: block; max-width: 100%; overflow-x: auto; }
+            #swagger-ui .swagger-ui .btn { max-width: 100%; }
+          }
         `}</style>
-      </head>
-      <body>
-        <div className="docs-header">
+        <header className="docs-header">
           <a href="/" className="docs-logo">
             <div className="docs-logo-icon">₹</div>
             <span className="docs-logo-text">CloudPay</span>
@@ -265,74 +311,23 @@ export default function DocsPage() {
           <span className="docs-badge">API Docs</span>
           <div className="docs-links">
             <a href="/docs" className="docs-link active">Next.js API</a>
-            <a href="http://localhost:8080/swagger-ui.html" target="_blank" className="docs-link">
-              Spring Boot API ↗
+            <a href="/api/openapi.json" target="_blank" rel="noreferrer" className="docs-link">
+              OpenAPI JSON ↗
             </a>
             <a href="/" className="docs-link">← Dashboard</a>
           </div>
-        </div>
+        </header>
 
         <div className="swagger-wrapper">
           <div className="backend-notice">
             <span className="icon">ℹ️</span>
             <div className="backend-notice-text">
-              <strong>Two API layers:</strong> This page documents the <strong>Next.js API routes</strong> (port 3000).
-              The Spring Boot backend (port 8080) has its own Swagger UI at{" "}
-              <a href="http://localhost:8080/swagger-ui.html" target="_blank" rel="noreferrer">
-                http://localhost:8080/swagger-ui.html
-              </a>.
-              {" "}Use the <strong>Authorize 🔒</strong> button below to paste your JWT token for authenticated endpoints.
+              This page documents the working <strong>CloudPay Next.js API routes</strong>. Use the <strong>Authorize 🔒</strong> button to paste your CloudPay bearer token; successful login and registration responses are also saved automatically for Try it out.
             </div>
           </div>
 
-          <div id="swagger-ui">
-            <div className="swagger-loading">
-              <div className="spinner"></div>
-              <span>Loading API documentation…</span>
-            </div>
-          </div>
+          <SwaggerExplorer />
         </div>
-
-        <script src="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui-bundle.js"></script>
-        <script src="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui-standalone-preset.js"></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.addEventListener('load', function() {
-                SwaggerUIBundle({
-                  url: '/api/openapi.json',
-                  dom_id: '#swagger-ui',
-                  presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
-                  layout: 'StandaloneLayout',
-                  deepLinking: true,
-                  displayOperationId: false,
-                  defaultModelsExpandDepth: 1,
-                  defaultModelExpandDepth: 2,
-                  docExpansion: 'list',
-                  filter: true,
-                  showExtensions: false,
-                  tryItOutEnabled: true,
-                  requestInterceptor: function(req) {
-                    // Auto-inject token from localStorage if available
-                    var token = localStorage.getItem('cloudpay_token');
-                    if (token && !req.headers['Authorization']) {
-                      req.headers['Authorization'] = 'Bearer ' + token;
-                    }
-                    return req;
-                  },
-                  onComplete: function() {
-                    // Auto-fill token from localStorage if present
-                    var token = localStorage.getItem('cloudpay_token');
-                    if (token) {
-                      window.ui = window.ui || {};
-                    }
-                  }
-                });
-              });
-            `,
-          }}
-        />
-      </body>
-    </html>
+    </div>
   );
 }
