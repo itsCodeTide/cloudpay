@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  // Render's Docker image runs the standalone server, while Vercel provides
+  // its own Next.js runtime and must use the standard output structure.
+  ...(process.env.VERCEL ? {} : { output: 'standalone' }),
   images: {
     unoptimized: true,
   },

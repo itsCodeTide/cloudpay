@@ -17,3 +17,6 @@ backend/target/
 tsconfig.tsbuildinfo
 *.log
 .DS_Store
+
+.vercel
+.env*

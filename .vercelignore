@@ -1,0 +1,10 @@
+node_modules
+.next
+.vercel
+.git
+.runtime-logs
+backend/target
+backend/.mvn
+.env*
+*.log
+.pnpm-store
